@@ -4,211 +4,326 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>IMBA44 Investor</title>
-  <meta name="description" content="IMBA44 Investor: global economic and financial insights, AI investment tools, and a space to talk markets.">
+  <meta name="description" content="IMBA44 Investor: global economic and financial insights, plus AI investment tools.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0b0d12;
-      --surface: rgba(255, 255, 255, 0.05);
-      --border: rgba(255, 255, 255, 0.1);
-      --text: #f2f4f8;
-      --muted: #a3acbb;
-      --blue: #7c9cff;
-      --mint: #5ee7c8;
-      --pink: #ff7eb6;
-      --yellow: #ffd93d;
+      --paper: #fff8f1;
+      --ink: #2a2350;
+      --ink-soft: #6d6794;
+      --white: #ffffff;
+      --pink: #ff7eb0;
+      --yellow: #ffd23f;
+      --mint: #45d9a8;
+      --sky: #5cb8ff;
+      --violet: #a48bff;
+      --pink-soft: #ffe1ee;
+      --yellow-soft: #fff3c2;
+      --mint-soft: #d7f8ea;
+      --sky-soft: #dcefff;
+      --violet-soft: #ece5ff;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; scroll-padding-top: 24px; }
     body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: "Inter", system-ui, sans-serif;
+      background-color: var(--paper);
+      background-image: radial-gradient(rgba(164, 139, 255, 0.18) 1.5px, transparent 1.5px);
+      background-size: 26px 26px;
+      color: var(--ink);
+      font-family: "Nunito", system-ui, sans-serif;
+      font-weight: 600;
       line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    h1, h2, h3, .logo, .btn, .label, .ticker-item b, .tile .val {
+      font-family: "Fredoka", "Nunito", system-ui, sans-serif;
+    }
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
     }
 
-    /* Drifting colour blobs */
-    .blob {
-      position: fixed; border-radius: 50%; filter: blur(70px); opacity: 0.35;
-      z-index: -1; pointer-events: none;
-      animation: drift 18s ease-in-out infinite alternate;
+    /* Scroll progress */
+    .progress {
+      position: fixed; top: 0; left: 0; z-index: 100;
+      width: 100%; height: 6px;
+      background: linear-gradient(90deg, var(--pink), var(--yellow), var(--mint), var(--sky), var(--violet));
+      transform-origin: 0 50%; transform: scaleX(0);
     }
-    .blob.b1 { width: 420px; height: 420px; background: var(--blue); top: -140px; left: -120px; }
-    .blob.b2 { width: 360px; height: 360px; background: var(--pink); top: 25vh; right: -140px; animation-duration: 22s; }
-    .blob.b3 { width: 300px; height: 300px; background: var(--mint); bottom: -90px; left: 30%; animation-duration: 26s; }
+
+    /* Floating colour blobs */
+    .blob {
+      position: fixed; z-index: -1; pointer-events: none; opacity: 0.4;
+      animation: morph 14s ease-in-out infinite alternate, drift 22s ease-in-out infinite alternate;
+    }
+    .b1 { width: 380px; height: 380px; background: var(--pink); top: -140px; left: -120px; }
+    .b2 { width: 340px; height: 340px; background: var(--yellow); top: 32vh; right: -150px; }
+    .b3 { width: 320px; height: 320px; background: var(--mint); bottom: -120px; left: 18%; }
+    @keyframes morph {
+      0% { border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%; }
+      50% { border-radius: 70% 30% 46% 54% / 30% 60% 40% 70%; }
+      100% { border-radius: 30% 70% 50% 50% / 60% 30% 70% 40%; }
+    }
     @keyframes drift {
-      from { transform: translate(0, 0) scale(1); }
-      to { transform: translate(60px, 40px) scale(1.15); }
+      from { transform: translate(0, 0); }
+      to { transform: translate(50px, 30px); }
     }
     #currency-bg {
       position: fixed; inset: 0; width: 100%; height: 100%;
       z-index: 0; pointer-events: none;
     }
-    .wrap { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 0 16px; }
-
-    /* Header */
-    header {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 24px 0; gap: 16px;
-    }
-    .logo { font-weight: 800; letter-spacing: 0.08em; font-size: 15px; display: flex; align-items: center; gap: 10px; }
-    .coin { display: inline-block; font-size: 20px; animation: spin 4s linear infinite; }
-    .logo span { color: var(--blue); }
-    nav { display: flex; gap: 20px; font-size: 14px; }
-    nav a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
-    nav a:hover { color: var(--yellow); }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .wrap { position: relative; z-index: 1; max-width: 1000px; margin: 0 auto; padding: 0 18px; }
 
     /* Live ticker */
     .ticker {
       position: relative; z-index: 2; overflow: hidden;
-      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.03); font-size: 13px; white-space: nowrap;
+      background: var(--yellow); border-bottom: 3px solid var(--ink);
     }
     .ticker-track { display: flex; width: max-content; animation: ticker 28s linear infinite; }
     .ticker:hover .ticker-track { animation-play-state: paused; }
-    .ticker-group { display: flex; gap: 40px; padding: 10px 20px; }
-    .ticker-item { color: var(--muted); }
-    .ticker-item b { color: var(--yellow); font-weight: 700; margin-left: 6px; }
+    .ticker-group { display: flex; gap: 12px; padding: 9px 6px; }
+    .ticker-item {
+      background: var(--white); border-radius: 999px; padding: 4px 14px;
+      font-size: 13px; font-weight: 800; white-space: nowrap;
+      box-shadow: 0 3px 0 var(--ink);
+    }
+    .ticker-item b { color: var(--pink); margin-left: 6px; font-weight: 600; }
     @keyframes ticker { to { transform: translateX(-50%); } }
 
-    /* Hero */
-    .hero { padding: 64px 0 80px; }
-    .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 28px; }
-    .chip {
-      font-size: 13px; padding: 8px 14px; border-radius: 999px;
-      border: 1px solid var(--border); background: var(--surface);
-      animation: bob 3s ease-in-out infinite;
+    /* Header */
+    header {
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 16px; padding: 22px 0;
     }
-    .chip:nth-child(2) { animation-delay: 0.4s; }
-    .chip:nth-child(3) { animation-delay: 0.8s; }
-    .chip:nth-child(4) { animation-delay: 1.2s; }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 19px; letter-spacing: 0.02em; }
+    .logo .coin { display: inline-block; font-size: 26px; animation: spin 6s linear infinite; }
+    .logo span { color: var(--pink); }
+    nav { display: flex; align-items: center; gap: 8px; }
+    nav a {
+      color: var(--ink); text-decoration: none; font-weight: 800; font-size: 15px;
+      padding: 8px 14px; border-radius: 999px;
+      transition: background 0.2s, transform 0.2s;
+    }
+    nav a:hover { background: var(--white); transform: translateY(-2px) rotate(-2deg); }
+    nav a.keep { background: var(--mint); box-shadow: 0 4px 0 var(--ink); }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Hero */
+    .hero { position: relative; padding: 56px 0 72px; }
+    .stickers { position: absolute; inset: 0; pointer-events: none; }
+    .st { position: absolute; font-size: 36px; animation: float 6s ease-in-out infinite; }
+    .st1 { top: 2%; right: 4%; }
+    .st2 { top: 52%; right: 6%; font-size: 30px; animation-delay: -2s; }
+    .st3 { bottom: 6%; right: 26%; font-size: 30px; animation-delay: -4s; }
+    .st4 { top: 4%; right: 34%; font-size: 24px; animation-delay: -3s; }
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) rotate(-6deg); }
+      50% { transform: translate(10px, -16px) rotate(10deg); }
+    }
+    .chips { position: relative; display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 28px; }
+    .chip {
+      font-size: 14px; font-weight: 800; padding: 8px 16px; border-radius: 999px;
+      box-shadow: 0 4px 0 var(--ink);
+      animation: bob 3.2s ease-in-out infinite;
+    }
+    .chip:nth-child(1) { background: var(--pink-soft); }
+    .chip:nth-child(2) { background: var(--yellow-soft); animation-delay: 0.3s; }
+    .chip:nth-child(3) { background: var(--mint-soft); animation-delay: 0.6s; }
     @keyframes bob {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-6px); }
+      50% { transform: translateY(-8px); }
     }
     h1 {
-      font-size: clamp(42px, 8vw, 80px);
-      font-weight: 800; line-height: 1.02; letter-spacing: -0.03em;
+      position: relative; max-width: 900px;
+      font-size: clamp(44px, 8vw, 84px); font-weight: 700;
+      line-height: 1.05; letter-spacing: -0.01em;
     }
-    .line { display: block; opacity: 0; transform: translateY(24px); animation: rise 0.8s ease forwards; }
-    .line:nth-child(2) { animation-delay: 0.15s; }
-    @keyframes rise { to { opacity: 1; transform: none; } }
-    .grad {
-      background: linear-gradient(90deg, var(--pink), var(--yellow), var(--mint), var(--blue), var(--pink));
-      background-size: 300% auto;
-      -webkit-background-clip: text; background-clip: text; color: transparent;
-      animation: shine 6s linear infinite;
+    .line { display: block; }
+    .word { display: inline-block; white-space: nowrap; }
+    .ch { display: inline-block; animation: pop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) backwards; }
+    @keyframes pop {
+      from { opacity: 0; transform: translateY(0.6em) scale(0.4); }
     }
-    @keyframes shine { to { background-position: 300% center; } }
+    .hl {
+      background: linear-gradient(transparent 55%, var(--yellow) 55%, var(--yellow) 92%, transparent 92%);
+      background-size: 0% 100%; background-repeat: no-repeat;
+      animation: highlight 0.8s ease 1.4s both;
+      padding: 0 4px;
+    }
+    @keyframes highlight { to { background-size: 100% 100%; } }
     .lead {
-      margin-top: 24px; max-width: 580px;
-      font-size: 18px; color: var(--muted); font-weight: 300;
+      margin-top: 24px; max-width: 580px; font-size: 19px; color: var(--ink-soft);
+      animation: rise 0.8s ease 0.9s backwards;
     }
-    .btns { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(16px); }
+    }
+    .btns { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 34px; animation: rise 0.8s ease 1.1s backwards; }
+
+    /* Buttons */
     .btn {
-      padding: 14px 24px; border-radius: 999px;
-      font-weight: 700; text-decoration: none; font-size: 15px;
-      transition: transform 0.2s, box-shadow 0.2s;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 26px; border-radius: 999px;
+      font-size: 17px; font-weight: 600; color: var(--ink); text-decoration: none;
+      box-shadow: 0 6px 0 var(--ink);
+      transition: transform 0.15s, box-shadow 0.15s;
     }
-    .btn.primary { background: var(--yellow); color: var(--bg); }
-    .btn.ghost { border: 1px solid var(--border); color: var(--text); background: var(--surface); }
-    .btn:hover { transform: translateY(-3px) rotate(-1deg); box-shadow: 0 12px 30px rgba(255, 217, 61, 0.25); }
+    .btn.primary { background: var(--yellow); }
+    .btn.ghost { background: var(--white); }
+    .btn:hover { transform: translateY(-3px) rotate(-1.5deg); box-shadow: 0 9px 0 var(--ink); }
+    .btn:active { transform: translateY(6px); box-shadow: 0 0 0 var(--ink); }
+    .arrow { display: inline-block; animation: nudge 1.2s ease-in-out infinite; }
+    @keyframes nudge {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(5px); }
+    }
 
     /* Sections */
-    section { padding: 80px 0; border-top: 1px solid var(--border); }
+    section { position: relative; padding: 88px 0; }
     .label {
-      font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
-      color: var(--mint); margin-bottom: 14px; font-weight: 600;
+      display: inline-block; font-size: 14px; font-weight: 600;
+      padding: 6px 16px; border-radius: 999px; margin-bottom: 16px;
+      box-shadow: 0 3px 0 var(--ink);
     }
-    h2 { font-size: clamp(28px, 4.4vw, 40px); font-weight: 800; line-height: 1.2; margin-bottom: 14px; }
-    .sub { color: var(--muted); max-width: 640px; }
+    .label.mint { background: var(--mint); }
+    .label.sky { background: var(--sky); }
+    h2 { font-size: clamp(34px, 5.2vw, 52px); font-weight: 700; line-height: 1.1; }
+    .sub { margin-top: 14px; max-width: 620px; font-size: 18px; color: var(--ink-soft); }
+    .squiggle { display: block; width: 220px; height: 26px; margin-top: 8px; overflow: visible; }
+    .squiggle path {
+      fill: none; stroke: var(--pink); stroke-width: 6; stroke-linecap: round;
+      stroke-dasharray: 100;
+    }
+    .js .squiggle:not(.in) path { stroke-dashoffset: 100; }
+    .js .squiggle.in path { animation: draw 1.2s ease 0.3s both; }
+    @keyframes draw { to { stroke-dashoffset: 0; } }
 
-    .js .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
-    .js .reveal.in { opacity: 1; transform: none; }
+    /* Scroll reveal (each element sets its own --d delay) */
+    .js .rv:not(.in) { opacity: 0; }
+    .js .rv.in { animation: rv-up 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) var(--d, 0ms) backwards; }
+    .js .rv.rv-left.in { animation-name: rv-left; }
+    .js .rv.rv-right.in { animation-name: rv-right; }
+    .js .rv.rv-pop.in { animation-name: pop-in; }
+    @keyframes rv-up { from { opacity: 0; transform: translateY(44px); } }
+    @keyframes rv-left { from { opacity: 0; transform: translateX(-70px); } }
+    @keyframes rv-right { from { opacity: 0; transform: translateX(70px); } }
+    @keyframes pop-in { from { opacity: 0; transform: scale(0.5) rotate(-8deg); } }
 
     /* Live FX board */
     .board {
-      display: grid; gap: 14px; margin-top: 36px;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      display: grid; gap: 16px; margin-top: 44px;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     }
-    .board-msg { color: var(--muted); font-size: 14px; margin-top: 36px; }
     .tile {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 20px; padding: 20px;
-      transition: transform 0.2s, border-color 0.2s;
+      padding: 22px; border-radius: 26px; box-shadow: 0 6px 0 var(--ink);
+      transition: transform 0.2s;
+      animation: pop-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+      animation-delay: calc(var(--i, 0) * 90ms + 100ms);
     }
-    .tile:hover { transform: translateY(-4px) rotate(-1deg); border-color: var(--yellow); }
-    .tile .code { font-size: 12px; color: var(--muted); letter-spacing: 0.1em; }
-    .tile .val { font-size: 26px; font-weight: 800; margin-top: 6px; font-variant-numeric: tabular-nums; }
-    .tile .unit { font-size: 12px; color: var(--muted); }
-    .board-note { margin-top: 14px; font-size: 13px; color: var(--muted); }
-    .board-note a { color: var(--text); }
+    .tile:hover { transform: translateY(-4px) rotate(-2deg); }
+    .badge {
+      width: 44px; height: 44px; display: grid; place-items: center;
+      border-radius: 50%; background: var(--white); font-size: 22px; font-weight: 600;
+      box-shadow: 0 3px 0 var(--ink);
+    }
+    .tile .code { margin-top: 12px; font-size: 13px; font-weight: 800; letter-spacing: 0.04em; }
+    .tile .val { font-size: 30px; font-weight: 600; margin-top: 2px; font-variant-numeric: tabular-nums; }
+    .tile .unit { font-size: 13px; color: var(--ink-soft); }
+    .board-msg { margin-top: 40px; font-weight: 700; color: var(--ink-soft); }
+    .board-note { margin-top: 16px; font-size: 13px; color: var(--ink-soft); }
+    .board-note a { color: var(--ink); font-weight: 800; }
 
     /* Cards */
     .grid {
-      display: grid; gap: 16px; margin-top: 40px;
+      display: grid; gap: 18px; margin-top: 44px;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     }
     .card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 22px; padding: 26px;
-      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+      padding: 28px; border-radius: 30px; box-shadow: 0 6px 0 var(--ink);
+      transition: transform 0.25s ease;
     }
-    .card:hover {
-      transform: translateY(-6px) rotate(-0.5deg);
-      border-color: rgba(255, 126, 182, 0.5);
-      box-shadow: 0 16px 40px rgba(255, 126, 182, 0.12);
+    .grid.topics { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+    .card:hover { transform: translateY(-6px) rotate(-1.2deg); }
+    .c-pink { background: var(--pink-soft); }
+    .c-yellow { background: var(--yellow-soft); }
+    .c-mint { background: var(--mint-soft); }
+    .c-sky { background: var(--sky-soft); }
+    .c-violet { background: var(--violet-soft); }
+    .emoji {
+      display: inline-block; font-size: 42px; margin-bottom: 14px;
+      animation: bob 2.8s ease-in-out infinite;
     }
-    .emoji { font-size: 34px; display: inline-block; margin-bottom: 14px; transition: transform 0.3s; }
-    .card:hover .emoji { transform: scale(1.2) rotate(-8deg); }
-    .card h3 { font-size: 19px; font-weight: 700; margin-bottom: 8px; }
-    .card p { color: var(--muted); font-size: 15px; }
+    .card:hover .emoji { animation: wiggle 0.6s ease; }
+    @keyframes wiggle {
+      0%, 100% { transform: rotate(0); }
+      25% { transform: rotate(-14deg); }
+      75% { transform: rotate(14deg); }
+    }
+    .card h3 { font-size: 22px; font-weight: 600; margin-bottom: 8px; }
+    .card p { font-size: 16px; color: var(--ink-soft); }
 
-    /* Investor talk */
-    .talk-box {
-      margin-top: 36px; background: var(--surface);
-      border: 1px solid var(--border); border-radius: 24px; padding: 24px;
+    /* Contact CTA */
+    .cta-card {
+      text-align: center; padding: 56px 28px; border-radius: 40px;
+      background: linear-gradient(120deg, var(--yellow), var(--pink) 55%, var(--violet));
+      box-shadow: 0 8px 0 var(--ink);
     }
-    .talk-head {
-      display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px;
-      font-size: 14px; color: var(--muted); margin-bottom: 16px;
+    .cta-card .sub { margin-left: auto; margin-right: auto; color: var(--ink); }
+    .wave {
+      display: inline-block; font-size: 52px; transform-origin: 70% 70%;
+      animation: wave 2.4s ease-in-out infinite;
     }
-    .talk-head a { color: var(--text); text-decoration: none; }
-    .talk-head a:hover { color: var(--yellow); }
-    .giscus-wrap { min-height: 200px; }
+    @keyframes wave {
+      0%, 100% { transform: rotate(0); }
+      15%, 45% { transform: rotate(16deg); }
+      30%, 60% { transform: rotate(-8deg); }
+      75% { transform: rotate(0); }
+    }
+    .cta-card .btn { margin-top: 30px; }
+    .mail { margin-top: 16px; font-size: 14px; font-weight: 800; }
+    .sticky {
+      max-width: 720px; margin: 44px auto 0; padding: 18px 22px;
+      background: var(--yellow-soft); border-radius: 20px; box-shadow: 0 5px 0 var(--ink);
+      font-size: 14px; color: var(--ink-soft); transform: rotate(-1deg);
+    }
 
-    .note {
-      margin-top: 40px; font-size: 13px; color: var(--muted);
-      border-left: 2px solid var(--pink); padding-left: 16px;
+    /* Confetti pieces (spawned by script) */
+    .confetti {
+      position: fixed; z-index: 50; width: 10px; height: 14px;
+      border-radius: 3px; pointer-events: none;
     }
 
     footer {
-      border-top: 1px solid var(--border); padding: 36px 0 48px;
-      display: flex; flex-wrap: wrap; gap: 16px 32px;
+      display: flex; flex-wrap: wrap; gap: 14px 28px;
       justify-content: space-between; align-items: center;
-      font-size: 14px; color: var(--muted);
+      padding: 36px 0 48px; font-size: 14px; color: var(--ink-soft);
+      border-top: 3px dashed rgba(42, 35, 80, 0.18);
     }
-    footer a { color: var(--text); text-decoration: none; }
-    footer a:hover { color: var(--yellow); }
+    footer a { color: var(--ink); font-weight: 800; text-decoration: none; }
+    footer a:hover { color: var(--pink); }
 
-    @media (max-width: 480px) {
+    @media (max-width: 560px) {
       nav a:not(.keep) { display: none; }
-      .hero { padding: 48px 0 64px; }
-      section { padding: 56px 0; }
+      .st2, .st4 { display: none; }
+      .hero { padding: 40px 0 56px; }
+      section { padding: 64px 0; }
+      .cta-card { padding: 40px 20px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation: none !important; transition: none !important; }
-      .js .reveal, .line { opacity: 1; transform: none; }
+      .js .rv:not(.in) { opacity: 1; }
+      .js .squiggle:not(.in) path { stroke-dashoffset: 0; }
+      .hl { background-size: 100% 100%; }
+      .ticker { overflow-x: auto; }
     }
   </style>
 </head>
 <body>
+  <div class="progress" id="progress"></div>
   <div class="blob b1"></div>
   <div class="blob b2"></div>
   <div class="blob b3"></div>
@@ -224,34 +339,39 @@
       <nav>
         <a href="#markets">Markets</a>
         <a href="#tools">AI Tools</a>
-        <a href="#talk">Talk</a>
-        <a class="keep" href="mailto:no1jsh@imba44.app">Contact</a>
+        <a class="keep" href="#contact">Say hi 👋</a>
       </nav>
     </header>
 
     <main>
       <div class="hero">
+        <div class="stickers" aria-hidden="true">
+          <span class="st st1">🪙</span>
+          <span class="st st2">📈</span>
+          <span class="st st3">🚀</span>
+          <span class="st st4">✨</span>
+        </div>
         <div class="chips">
           <span class="chip">🌍 Global economy</span>
           <span class="chip">💱 FX &amp; rates</span>
           <span class="chip">🤖 AI tools</span>
-          <span class="chip">💬 Investor talk</span>
         </div>
         <h1>
-          <span class="line">Global markets,</span>
-          <span class="line grad">made easy to read.</span>
+          <span class="line" data-split data-delay="200">Global markets,</span>
+          <span class="line"><span class="hl" data-split data-delay="700">made easy to read.</span></span>
         </h1>
-        <p class="lead">IMBA44 Investor brings you international economic and financial insights, AI-powered investment tools, and a space to talk markets with fellow investors.</p>
+        <p class="lead">IMBA44 Investor brings you international economic and financial insights and AI-powered investment tools, all in one friendly place.</p>
         <div class="btns">
-          <a class="btn primary" href="#markets">Explore markets →</a>
-          <a class="btn ghost" href="#talk">Join the talk</a>
+          <a class="btn primary" href="#markets">Explore markets <span class="arrow">→</span></a>
+          <a class="btn ghost" href="#contact">Say hi 👋</a>
         </div>
       </div>
 
       <section id="markets">
-        <div class="label">Markets</div>
-        <h2 class="reveal">Live FX, plus the big picture.</h2>
-        <p class="sub reveal">Key exchange rates against the US dollar, updated daily. Below, the global topics we cover.</p>
+        <span class="label mint rv rv-up">Markets</span>
+        <h2 class="rv rv-left">Live FX, plus the big picture.</h2>
+        <svg class="squiggle" viewBox="0 0 220 26" aria-hidden="true"><path pathLength="100" d="M4 14 C 24 2, 44 26, 64 14 S 104 2, 124 14 S 164 26, 184 14 S 210 6, 216 12"/></svg>
+        <p class="sub rv rv-up" style="--d: 120ms">Key exchange rates against the US dollar, refreshed daily. Below, the global topics we cover.</p>
 
         <div class="board" id="board"></div>
         <p class="board-msg" id="board-msg">Loading live rates…</p>
@@ -259,24 +379,24 @@
           Rates update daily · Last update: <span id="updated"></span> · Data: <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">Rates By Exchange Rate API</a>
         </p>
 
-        <div class="grid">
-          <div class="card reveal">
-            <div class="emoji">🌐</div>
+        <div class="grid topics">
+          <div class="card c-pink rv rv-pop" style="--d: 0ms">
+            <span class="emoji">🌐</span>
             <h3>Global macro</h3>
             <p>Inflation, growth, and central bank moves across major economies, explained in plain language.</p>
           </div>
-          <div class="card reveal">
-            <div class="emoji">💱</div>
+          <div class="card c-yellow rv rv-pop" style="--d: 120ms">
+            <span class="emoji" style="animation-delay: -0.8s">💱</span>
             <h3>FX &amp; rates</h3>
             <p>Currency trends and interest rate shifts, and how they ripple through markets.</p>
           </div>
-          <div class="card reveal">
-            <div class="emoji">📊</div>
+          <div class="card c-mint rv rv-pop" style="--d: 240ms">
+            <span class="emoji" style="animation-delay: -1.6s">📊</span>
             <h3>Equities &amp; sectors</h3>
             <p>Sector rotations and market themes, tracked across regions.</p>
           </div>
-          <div class="card reveal">
-            <div class="emoji">🪙</div>
+          <div class="card c-sky rv rv-pop" style="--d: 360ms">
+            <span class="emoji" style="animation-delay: -2.4s">🪙</span>
             <h3>Commodities &amp; crypto</h3>
             <p>Energy, metals, and digital assets, viewed through the macro lens.</p>
           </div>
@@ -284,72 +404,92 @@
       </section>
 
       <section id="tools">
-        <div class="label">AI Tools</div>
-        <h2 class="reveal">AI tools for smarter investing.</h2>
-        <p class="sub reveal">We build tools that do the repetitive analysis, so people have more time to think deeply.</p>
+        <span class="label sky rv rv-up">AI Tools</span>
+        <h2 class="rv rv-right">AI tools for smarter investing.</h2>
+        <p class="sub rv rv-up" style="--d: 120ms">We build tools that handle the repetitive analysis, so people have more time to think deeply.</p>
         <div class="grid">
-          <div class="card reveal">
-            <div class="emoji">🔎</div>
+          <div class="card c-sky rv rv-left" style="--d: 0ms">
+            <span class="emoji">🔎</span>
             <h3>Research automation</h3>
-            <p>We gather filings, news, and financial data and summarize the key points.</p>
+            <p>We gather filings, news, and financial data, then summarize the key points.</p>
           </div>
-          <div class="card reveal">
-            <div class="emoji">📡</div>
+          <div class="card c-mint rv rv-up" style="--d: 150ms">
+            <span class="emoji" style="animation-delay: -1s">📡</span>
             <h3>Signal analysis</h3>
             <p>We combine multiple data sources to surface meaningful changes, shown with their evidence.</p>
           </div>
-          <div class="card reveal">
-            <div class="emoji">🛡️</div>
+          <div class="card c-violet rv rv-right" style="--d: 300ms">
+            <span class="emoji" style="animation-delay: -2s">🛡️</span>
             <h3>Risk visibility</h3>
             <p>We visualize portfolio exposure and risk factors so they are easy to understand.</p>
           </div>
         </div>
       </section>
 
-      <section id="talk">
-        <div class="label">Investor Talk</div>
-        <h2 class="reveal">Talk markets with fellow investors.</h2>
-        <p class="sub reveal">Share your views, ask questions, and discuss global macro trends. Sign in with GitHub to join the conversation.</p>
-        <div class="talk-box reveal">
-          <div class="talk-head">
-            <span>Powered by GitHub Discussions</span>
-            <a href="https://github.com/no1jsh/imba44-landing/discussions" target="_blank" rel="noopener">Open the full board ↗</a>
-          </div>
-          <div class="giscus-wrap">
-            <script src="https://giscus.app/client.js"
-              data-repo="no1jsh/imba44-landing"
-              data-repo-id="R_kgDOVAfjZw"
-              data-category="General"
-              data-category-id="DIC_kwDOVAfjZ84DHUaa"
-              data-mapping="specific"
-              data-term="IMBA44 Investor Talk"
-              data-strict="0"
-              data-reactions-enabled="1"
-              data-emit-metadata="0"
-              data-input-position="top"
-              data-theme="transparent_dark"
-              data-lang="en"
-              crossorigin="anonymous"
-              async></script>
-          </div>
+      <section id="contact">
+        <div class="cta-card rv rv-pop">
+          <div class="wave" aria-hidden="true">👋</div>
+          <h2>Got a question? Say hi!</h2>
+          <p class="sub">We love hearing from curious investors, partners, and builders.</p>
+          <a class="btn primary" href="mailto:no1jsh@imba44.app" data-confetti>Send us an email <span class="arrow">✉️</span></a>
+          <p class="mail">no1jsh@imba44.app</p>
         </div>
-        <p class="note">Investor Talk posts are personal opinions from community members. They are not investment advice, and IMBA44 Investor does not endorse them.</p>
-        <p class="note">Information and analysis provided by this service are for reference only and do not constitute investment advice or solicitation. Final investment decisions and responsibility rest with the user.</p>
+        <p class="sticky rv rv-up">Information and analysis provided by this service are for reference only and do not constitute investment advice or solicitation. Final investment decisions and responsibility rest with the user.</p>
       </section>
     </main>
 
     <footer>
-      <div>© 2026 IMBA44 Investor. All rights reserved.</div>
+      <div>🪙 © 2026 IMBA44 Investor. All rights reserved.</div>
       <a href="mailto:no1jsh@imba44.app">no1jsh@imba44.app</a>
     </footer>
   </div>
 
   <script>
     (() => {
-      document.documentElement.classList.add("js");
+      const root = document.documentElement;
+      root.classList.add("js");
       const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-      // Reveal sections on scroll
+      // Scroll progress bar
+      const progress = document.getElementById("progress");
+      const updateProgress = () => {
+        const max = root.scrollHeight - window.innerHeight;
+        progress.style.transform = `scaleX(${max > 0 ? window.scrollY / max : 0})`;
+      };
+      window.addEventListener("scroll", updateProgress, { passive: true });
+      updateProgress();
+
+      // Bouncy letter-by-letter entrance for the headline
+      if (!reduceMotion) {
+        document.querySelectorAll("[data-split]").forEach((el) => {
+          const text = el.textContent;
+          const base = Number(el.dataset.delay || 0);
+          el.textContent = "";
+          const sr = document.createElement("span");
+          sr.className = "sr-only";
+          sr.textContent = text;
+          el.appendChild(sr);
+          let index = 0;
+          text.split(" ").forEach((word, wi, words) => {
+            const wordEl = document.createElement("span");
+            wordEl.className = "word";
+            for (const ch of word) {
+              const span = document.createElement("span");
+              span.className = "ch";
+              span.setAttribute("aria-hidden", "true");
+              span.style.animationDelay = `${base + index * 35}ms`;
+              span.textContent = ch;
+              wordEl.appendChild(span);
+              index++;
+            }
+            el.appendChild(wordEl);
+            if (wi < words.length - 1) el.appendChild(document.createTextNode(" "));
+            index++;
+          });
+        });
+      }
+
+      // Reveal elements as they scroll into view
       const io = new IntersectionObserver((entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
@@ -357,17 +497,18 @@
             io.unobserve(entry.target);
           }
         }
-      }, { threshold: 0.15 });
-      document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+      }, { threshold: 0.2 });
+      document.querySelectorAll(".rv, .squiggle").forEach((el) => io.observe(el));
 
       // Live FX rates (base USD)
       const CURRENCIES = [
-        ["KRW", "Korean Won"],
-        ["EUR", "Euro"],
-        ["JPY", "Japanese Yen"],
-        ["GBP", "British Pound"],
-        ["CNY", "Chinese Yuan"],
+        ["KRW", "Korean Won", "₩"],
+        ["EUR", "Euro", "€"],
+        ["JPY", "Japanese Yen", "¥"],
+        ["GBP", "British Pound", "£"],
+        ["CNY", "Chinese Yuan", "¥"],
       ];
+      const TILE_COLORS = ["var(--pink-soft)", "var(--yellow-soft)", "var(--mint-soft)", "var(--sky-soft)", "var(--violet-soft)"];
       const fmt = (v) => v.toLocaleString("en-US", {
         minimumFractionDigits: 2,
         maximumFractionDigits: v < 10 ? 4 : 2,
@@ -392,7 +533,8 @@
       }
 
       function render(rates, updatedAt) {
-        const items = CURRENCIES.map(([code, name]) => ({ code, name, value: rates[code] }))
+        const items = CURRENCIES
+          .map(([code, name, symbol]) => ({ code, name, symbol, value: rates[code] }))
           .filter((i) => typeof i.value === "number");
         if (items.length === 0) throw new Error("no rates");
 
@@ -400,16 +542,18 @@
         const group = document.createElement("div");
         group.className = "ticker-group";
         group.innerHTML = items
-          .map((i) => `<span class="ticker-item">USD/${i.code}<b>${fmt(i.value)}</b></span>`)
+          .map((i) => `<span class="ticker-item">${i.symbol} USD/${i.code}<b>${fmt(i.value)}</b></span>`)
           .join("");
         tickerTrack.replaceChildren(group, group.cloneNode(true));
         ticker.hidden = false;
 
-        // Board tiles
-        board.replaceChildren(...items.map((i) => {
+        // Board tiles pop in one after another
+        board.replaceChildren(...items.map((i, idx) => {
           const tile = document.createElement("div");
           tile.className = "tile";
-          tile.innerHTML = `<div class="code">USD → ${i.code}</div><div class="val">0</div><div class="unit">${i.name} per 1 USD</div>`;
+          tile.style.setProperty("--i", idx);
+          tile.style.background = TILE_COLORS[idx % TILE_COLORS.length];
+          tile.innerHTML = `<div class="badge">${i.symbol}</div><div class="code">USD → ${i.code}</div><div class="val">0</div><div class="unit">${i.name}</div>`;
           countUp(tile.querySelector(".val"), i.value);
           return tile;
         }));
@@ -431,74 +575,104 @@
           boardMsg.textContent = "Live rates are unavailable right now. Please check back later.";
         });
 
+      // Confetti burst on the contact button
+      const CONFETTI_COLORS = ["#ff7eb0", "#ffd23f", "#45d9a8", "#5cb8ff", "#a48bff"];
+      function burst(x, y) {
+        for (let i = 0; i < 36; i++) {
+          const piece = document.createElement("span");
+          piece.className = "confetti";
+          piece.style.background = CONFETTI_COLORS[i % CONFETTI_COLORS.length];
+          piece.style.left = `${x}px`;
+          piece.style.top = `${y}px`;
+          document.body.appendChild(piece);
+          const angle = Math.random() * Math.PI * 2;
+          const dist = 80 + Math.random() * 160;
+          const dx = Math.cos(angle) * dist;
+          const dy = Math.sin(angle) * dist - 90;
+          const anim = piece.animate(
+            [
+              { transform: "translate(0, 0) rotate(0deg)", opacity: 1 },
+              { transform: `translate(${dx}px, ${dy + 220}px) rotate(${Math.random() * 720 - 360}deg)`, opacity: 0 },
+            ],
+            { duration: 900 + Math.random() * 600, easing: "cubic-bezier(0.2, 0.7, 0.4, 1)", fill: "forwards" }
+          );
+          anim.onfinish = () => piece.remove();
+        }
+      }
+      document.querySelectorAll("[data-confetti]").forEach((el) => {
+        el.addEventListener("click", (e) => {
+          if (!reduceMotion) burst(e.clientX, e.clientY);
+        });
+      });
+
       // Floating currency symbols background
       const canvas = document.getElementById("currency-bg");
-      if (!canvas || reduceMotion) return;
+      if (canvas && !reduceMotion) {
+        const ctx = canvas.getContext("2d");
+        const symbols = ["$", "€", "£", "¥", "₩", "₿"];
+        const colors = ["255, 126, 176", "69, 217, 168", "92, 184, 255", "164, 139, 255", "255, 176, 60"];
+        let particles = [];
+        let width = 0;
+        let height = 0;
 
-      const ctx = canvas.getContext("2d");
-      const symbols = ["$", "€", "£", "¥", "₩", "₿"];
-      const colors = ["124, 156, 255", "94, 231, 200", "255, 217, 61", "255, 126, 182"];
-      let particles = [];
-      let width = 0;
-      let height = 0;
+        const rand = (min, max) => Math.random() * (max - min) + min;
 
-      const rand = (min, max) => Math.random() * (max - min) + min;
-
-      function makeParticle(startAtBottom) {
-        return {
-          x: rand(0, width),
-          y: startAtBottom ? height + rand(0, 80) : rand(0, height),
-          size: rand(18, 44),
-          speed: rand(14, 34),
-          drift: rand(-10, 10),
-          rot: rand(-0.5, 0.5),
-          angle: rand(0, Math.PI * 2),
-          alpha: rand(0.08, 0.24),
-          symbol: symbols[Math.floor(Math.random() * symbols.length)],
-          color: colors[Math.floor(Math.random() * colors.length)],
-        };
-      }
-
-      function resize() {
-        const dpr = Math.min(window.devicePixelRatio || 1, 2);
-        width = window.innerWidth;
-        height = window.innerHeight;
-        canvas.width = width * dpr;
-        canvas.height = height * dpr;
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        const count = Math.round(Math.min(44, (width * height) / 28000));
-        particles = Array.from({ length: count }, () => makeParticle(false));
-      }
-
-      let last = performance.now();
-      function frame(now) {
-        const dt = Math.min((now - last) / 1000, 0.05);
-        last = now;
-        ctx.clearRect(0, 0, width, height);
-
-        for (const p of particles) {
-          p.y -= p.speed * dt;
-          p.x += p.drift * dt;
-          p.angle += p.rot * dt;
-          if (p.y < -60) Object.assign(p, makeParticle(true));
-
-          ctx.save();
-          ctx.translate(p.x, p.y);
-          ctx.rotate(p.angle);
-          ctx.globalAlpha = p.alpha;
-          ctx.fillStyle = `rgb(${p.color})`;
-          ctx.font = `700 ${p.size}px Inter, system-ui, sans-serif`;
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-          ctx.fillText(p.symbol, 0, 0);
-          ctx.restore();
+        function makeParticle(startAtBottom) {
+          return {
+            x: rand(0, width),
+            y: startAtBottom ? height + rand(0, 80) : rand(0, height),
+            size: rand(18, 44),
+            speed: rand(14, 34),
+            drift: rand(-10, 10),
+            rot: rand(-0.5, 0.5),
+            angle: rand(0, Math.PI * 2),
+            alpha: rand(0.16, 0.3),
+            symbol: symbols[Math.floor(Math.random() * symbols.length)],
+            color: colors[Math.floor(Math.random() * colors.length)],
+          };
         }
-        requestAnimationFrame(frame);
-      }
 
-      resize();
-      window.addEventListener("resize", resize);
-      requestAnimationFrame((t) => { last = t; frame(t); });
+        function resize() {
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          width = window.innerWidth;
+          height = window.innerHeight;
+          canvas.width = width * dpr;
+          canvas.height = height * dpr;
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          const count = Math.round(Math.min(44, (width * height) / 28000));
+          particles = Array.from({ length: count }, () => makeParticle(false));
+        }
+
+        let last = performance.now();
+        function frame(now) {
+          const dt = Math.min((now - last) / 1000, 0.05);
+          last = now;
+          ctx.clearRect(0, 0, width, height);
+
+          for (const p of particles) {
+            p.y -= p.speed * dt;
+            p.x += p.drift * dt;
+            p.angle += p.rot * dt;
+            if (p.y < -60) Object.assign(p, makeParticle(true));
+
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.angle);
+            ctx.globalAlpha = p.alpha;
+            ctx.fillStyle = `rgb(${p.color})`;
+            ctx.font = `700 ${p.size}px Nunito, system-ui, sans-serif`;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(p.symbol, 0, 0);
+            ctx.restore();
+          }
+          requestAnimationFrame(frame);
+        }
+
+        resize();
+        window.addEventListener("resize", resize);
+        requestAnimationFrame((t) => { last = t; frame(t); });
+      }
     })();
   </script>
 </body>
