@@ -1,13 +1,13 @@
 <!doctype html>
-<html lang="ko">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>IMBA44 Investor</title>
-  <meta name="description" content="IMBA44 Investor는 투자를 위한 AI 도구를 개발합니다.">
+  <meta name="description" content="IMBA44 Investor builds AI tools for investment decisions.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+KR:wght@300;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #0b0d12;
@@ -23,7 +23,7 @@
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: "Inter", "Noto Sans KR", system-ui, sans-serif;
+      font-family: "Inter", system-ui, sans-serif;
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
@@ -39,7 +39,15 @@
       z-index: -1;
       pointer-events: none;
     }
-    .wrap { max-width: 960px; margin: 0 auto; padding: 0 16px; }
+    #currency-bg {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .wrap { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 0 16px; }
 
     header {
       display: flex; justify-content: space-between; align-items: center;
@@ -124,42 +132,44 @@
   </style>
 </head>
 <body>
+  <canvas id="currency-bg" aria-hidden="true"></canvas>
+
   <div class="wrap">
     <header>
       <div class="logo">IMBA44 <span>INVESTOR</span></div>
-      <a href="mailto:no1jsh@imba44.app">문의하기</a>
+      <a href="mailto:no1jsh@imba44.app">Contact</a>
     </header>
 
     <main>
       <div class="hero">
         <span class="eyebrow">AI for Investment</span>
-        <h1>데이터로 읽는<br><span class="grad">투자의 다음 장면.</span></h1>
-        <p class="lead">IMBA44 Investor는 투자 의사결정을 돕는 AI 도구를 만듭니다. 흩어진 정보를 모으고, 해석하고, 한눈에 보이게 만듭니다.</p>
-        <a class="cta" href="mailto:no1jsh@imba44.app">함께 이야기하기 →</a>
+        <h1>Investing,<br><span class="grad">read through data.</span></h1>
+        <p class="lead">IMBA44 Investor builds AI tools that support investment decisions. We gather scattered information, interpret it, and make it easy to see at a glance.</p>
+        <a class="cta" href="mailto:no1jsh@imba44.app">Get in touch →</a>
       </div>
 
       <section>
         <div class="label">About</div>
-        <h2>복잡한 시장을 더 명확하게.</h2>
-        <p class="sub">정보가 많을수록 판단은 어려워집니다. 우리는 반복적인 분석은 AI에 맡기고, 사람이 더 깊이 생각할 시간을 돌려주는 도구를 지향합니다.</p>
+        <h2>Making complex markets clearer.</h2>
+        <p class="sub">The more information there is, the harder decisions become. We let AI handle repetitive analysis so people have more time to think deeply.</p>
         <div class="grid">
           <div class="card">
             <div class="num">01</div>
-            <h3>리서치 자동화</h3>
-            <p>공시, 뉴스, 재무 데이터를 모아 핵심만 요약하는 리서치 보조 도구를 개발합니다.</p>
+            <h3>Research Automation</h3>
+            <p>We build research assistants that gather filings, news, and financial data and summarize the key points.</p>
           </div>
           <div class="card">
             <div class="num">02</div>
-            <h3>시그널 분석</h3>
-            <p>여러 데이터 소스를 결합해 주목할 변화를 찾고, 근거와 함께 보여줍니다.</p>
+            <h3>Signal Analysis</h3>
+            <p>We combine multiple data sources to surface meaningful changes, shown alongside their supporting evidence.</p>
           </div>
           <div class="card">
             <div class="num">03</div>
-            <h3>리스크 가시화</h3>
-            <p>포트폴리오의 노출과 위험 요인을 쉽게 이해할 수 있도록 시각화합니다.</p>
+            <h3>Risk Visibility</h3>
+            <p>We visualize portfolio exposure and risk factors so they are easy to understand.</p>
           </div>
         </div>
-        <p class="note">본 서비스에서 제공하는 정보와 분석은 참고용이며, 투자 권유나 자문이 아닙니다. 투자에 대한 최종 판단과 책임은 이용자에게 있습니다.</p>
+        <p class="note">Information and analysis provided by this service are for reference only and do not constitute investment advice or solicitation. Final investment decisions and responsibility rest with the user.</p>
       </section>
     </main>
 
@@ -168,5 +178,77 @@
       <a href="mailto:no1jsh@imba44.app">no1jsh@imba44.app</a>
     </footer>
   </div>
+
+  <script>
+    (() => {
+      const canvas = document.getElementById("currency-bg");
+      if (!canvas || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+      const ctx = canvas.getContext("2d");
+      const symbols = ["$", "€", "£", "¥", "₩", "₿"];
+      const colors = ["124, 156, 255", "94, 231, 200"];
+      let particles = [];
+      let width = 0;
+      let height = 0;
+
+      const rand = (min, max) => Math.random() * (max - min) + min;
+
+      function makeParticle(startAtBottom) {
+        return {
+          x: rand(0, width),
+          y: startAtBottom ? height + rand(0, 80) : rand(0, height),
+          size: rand(18, 42),
+          speed: rand(12, 30),
+          drift: rand(-8, 8),
+          rot: rand(-0.4, 0.4),
+          angle: rand(0, Math.PI * 2),
+          alpha: rand(0.08, 0.22),
+          symbol: symbols[Math.floor(Math.random() * symbols.length)],
+          color: colors[Math.floor(Math.random() * colors.length)],
+        };
+      }
+
+      function resize() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        const count = Math.round(Math.min(40, (width * height) / 30000));
+        particles = Array.from({ length: count }, () => makeParticle(false));
+      }
+
+      let last = performance.now();
+      function frame(now) {
+        const dt = Math.min((now - last) / 1000, 0.05);
+        last = now;
+        ctx.clearRect(0, 0, width, height);
+
+        for (const p of particles) {
+          p.y -= p.speed * dt;
+          p.x += p.drift * dt;
+          p.angle += p.rot * dt;
+          if (p.y < -60) Object.assign(p, makeParticle(true));
+
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.angle);
+          ctx.globalAlpha = p.alpha;
+          ctx.fillStyle = `rgb(${p.color})`;
+          ctx.font = `600 ${p.size}px Inter, system-ui, sans-serif`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(p.symbol, 0, 0);
+          ctx.restore();
+        }
+        requestAnimationFrame(frame);
+      }
+
+      resize();
+      window.addEventListener("resize", resize);
+      requestAnimationFrame((t) => { last = t; frame(t); });
+    })();
+  </script>
 </body>
 </html>
