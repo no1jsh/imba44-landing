@@ -4,22 +4,24 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>IMBA44 Investor</title>
-  <meta name="description" content="IMBA44 Investor builds AI tools for investment decisions.">
+  <meta name="description" content="IMBA44 Investor: global economic and financial insights, AI investment tools, and a space to talk markets.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #0b0d12;
-      --surface: rgba(255, 255, 255, 0.04);
-      --border: rgba(255, 255, 255, 0.08);
+      --surface: rgba(255, 255, 255, 0.05);
+      --border: rgba(255, 255, 255, 0.1);
       --text: #f2f4f8;
-      --muted: #9aa3b2;
-      --accent: #7c9cff;
-      --accent-2: #5ee7c8;
+      --muted: #a3acbb;
+      --blue: #7c9cff;
+      --mint: #5ee7c8;
+      --pink: #ff7eb6;
+      --yellow: #ffd93d;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; }
+    html { scroll-behavior: smooth; }
     body {
       background: var(--bg);
       color: var(--text);
@@ -28,91 +30,161 @@
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
     }
-    body::before {
-      content: "";
-      position: fixed;
-      inset: -20% -10% auto;
-      height: 70vh;
-      background: radial-gradient(circle at 30% 30%, rgba(124, 156, 255, 0.25), transparent 60%),
-                  radial-gradient(circle at 70% 20%, rgba(94, 231, 200, 0.18), transparent 55%);
-      filter: blur(40px);
-      z-index: -1;
-      pointer-events: none;
+
+    /* Drifting colour blobs */
+    .blob {
+      position: fixed; border-radius: 50%; filter: blur(70px); opacity: 0.35;
+      z-index: -1; pointer-events: none;
+      animation: drift 18s ease-in-out infinite alternate;
+    }
+    .blob.b1 { width: 420px; height: 420px; background: var(--blue); top: -140px; left: -120px; }
+    .blob.b2 { width: 360px; height: 360px; background: var(--pink); top: 25vh; right: -140px; animation-duration: 22s; }
+    .blob.b3 { width: 300px; height: 300px; background: var(--mint); bottom: -90px; left: 30%; animation-duration: 26s; }
+    @keyframes drift {
+      from { transform: translate(0, 0) scale(1); }
+      to { transform: translate(60px, 40px) scale(1.15); }
     }
     #currency-bg {
-      position: fixed;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      pointer-events: none;
+      position: fixed; inset: 0; width: 100%; height: 100%;
+      z-index: 0; pointer-events: none;
     }
     .wrap { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 0 16px; }
 
+    /* Header */
     header {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 28px 0;
+      padding: 24px 0; gap: 16px;
     }
-    .logo { font-weight: 800; letter-spacing: 0.08em; font-size: 15px; }
-    .logo span { color: var(--accent); }
-    header a {
-      color: var(--muted); text-decoration: none; font-size: 14px;
-    }
-    header a:hover { color: var(--text); }
+    .logo { font-weight: 800; letter-spacing: 0.08em; font-size: 15px; display: flex; align-items: center; gap: 10px; }
+    .coin { display: inline-block; font-size: 20px; animation: spin 4s linear infinite; }
+    .logo span { color: var(--blue); }
+    nav { display: flex; gap: 20px; font-size: 14px; }
+    nav a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    nav a:hover { color: var(--yellow); }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .hero { padding: 80px 0 96px; text-align: left; }
-    .eyebrow {
-      display: inline-block; font-size: 12px; letter-spacing: 0.18em;
-      text-transform: uppercase; color: var(--accent-2);
-      border: 1px solid var(--border); border-radius: 999px;
-      padding: 6px 14px; margin-bottom: 28px;
+    /* Live ticker */
+    .ticker {
+      position: relative; z-index: 2; overflow: hidden;
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.03); font-size: 13px; white-space: nowrap;
+    }
+    .ticker-track { display: flex; width: max-content; animation: ticker 28s linear infinite; }
+    .ticker:hover .ticker-track { animation-play-state: paused; }
+    .ticker-group { display: flex; gap: 40px; padding: 10px 20px; }
+    .ticker-item { color: var(--muted); }
+    .ticker-item b { color: var(--yellow); font-weight: 700; margin-left: 6px; }
+    @keyframes ticker { to { transform: translateX(-50%); } }
+
+    /* Hero */
+    .hero { padding: 64px 0 80px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 28px; }
+    .chip {
+      font-size: 13px; padding: 8px 14px; border-radius: 999px;
+      border: 1px solid var(--border); background: var(--surface);
+      animation: bob 3s ease-in-out infinite;
+    }
+    .chip:nth-child(2) { animation-delay: 0.4s; }
+    .chip:nth-child(3) { animation-delay: 0.8s; }
+    .chip:nth-child(4) { animation-delay: 1.2s; }
+    @keyframes bob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
     }
     h1 {
-      font-size: clamp(40px, 8vw, 76px);
-      font-weight: 800; line-height: 1.05; letter-spacing: -0.02em;
+      font-size: clamp(42px, 8vw, 80px);
+      font-weight: 800; line-height: 1.02; letter-spacing: -0.03em;
     }
-    h1 .grad {
-      background: linear-gradient(120deg, var(--accent), var(--accent-2));
+    .line { display: block; opacity: 0; transform: translateY(24px); animation: rise 0.8s ease forwards; }
+    .line:nth-child(2) { animation-delay: 0.15s; }
+    @keyframes rise { to { opacity: 1; transform: none; } }
+    .grad {
+      background: linear-gradient(90deg, var(--pink), var(--yellow), var(--mint), var(--blue), var(--pink));
+      background-size: 300% auto;
       -webkit-background-clip: text; background-clip: text; color: transparent;
+      animation: shine 6s linear infinite;
     }
+    @keyframes shine { to { background-position: 300% center; } }
     .lead {
-      margin-top: 24px; max-width: 560px;
+      margin-top: 24px; max-width: 580px;
       font-size: 18px; color: var(--muted); font-weight: 300;
     }
-    .cta {
-      display: inline-block; margin-top: 36px;
-      padding: 14px 26px; border-radius: 999px;
-      background: var(--text); color: var(--bg);
-      font-weight: 600; text-decoration: none; font-size: 15px;
+    .btns { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
+    .btn {
+      padding: 14px 24px; border-radius: 999px;
+      font-weight: 700; text-decoration: none; font-size: 15px;
       transition: transform 0.2s, box-shadow 0.2s;
     }
-    .cta:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(124, 156, 255, 0.25); }
+    .btn.primary { background: var(--yellow); color: var(--bg); }
+    .btn.ghost { border: 1px solid var(--border); color: var(--text); background: var(--surface); }
+    .btn:hover { transform: translateY(-3px) rotate(-1deg); box-shadow: 0 12px 30px rgba(255, 217, 61, 0.25); }
 
-    section { padding: 72px 0; border-top: 1px solid var(--border); }
+    /* Sections */
+    section { padding: 80px 0; border-top: 1px solid var(--border); }
     .label {
       font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
-      color: var(--accent); margin-bottom: 14px;
+      color: var(--mint); margin-bottom: 14px; font-weight: 600;
     }
-    h2 { font-size: clamp(26px, 4vw, 36px); font-weight: 700; line-height: 1.25; margin-bottom: 16px; }
-    .sub { color: var(--muted); max-width: 620px; }
+    h2 { font-size: clamp(28px, 4.4vw, 40px); font-weight: 800; line-height: 1.2; margin-bottom: 14px; }
+    .sub { color: var(--muted); max-width: 640px; }
 
+    .js .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .js .reveal.in { opacity: 1; transform: none; }
+
+    /* Live FX board */
+    .board {
+      display: grid; gap: 14px; margin-top: 36px;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+    .board-msg { color: var(--muted); font-size: 14px; margin-top: 36px; }
+    .tile {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 20px; padding: 20px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .tile:hover { transform: translateY(-4px) rotate(-1deg); border-color: var(--yellow); }
+    .tile .code { font-size: 12px; color: var(--muted); letter-spacing: 0.1em; }
+    .tile .val { font-size: 26px; font-weight: 800; margin-top: 6px; font-variant-numeric: tabular-nums; }
+    .tile .unit { font-size: 12px; color: var(--muted); }
+    .board-note { margin-top: 14px; font-size: 13px; color: var(--muted); }
+    .board-note a { color: var(--text); }
+
+    /* Cards */
     .grid {
       display: grid; gap: 16px; margin-top: 40px;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     }
     .card {
       background: var(--surface); border: 1px solid var(--border);
-      border-radius: 18px; padding: 28px;
-      transition: border-color 0.2s, transform 0.2s;
+      border-radius: 22px; padding: 26px;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
     }
-    .card:hover { border-color: rgba(124, 156, 255, 0.4); transform: translateY(-3px); }
-    .card .num { font-size: 13px; color: var(--accent-2); font-weight: 600; margin-bottom: 18px; }
-    .card h3 { font-size: 20px; font-weight: 600; margin-bottom: 10px; }
+    .card:hover {
+      transform: translateY(-6px) rotate(-0.5deg);
+      border-color: rgba(255, 126, 182, 0.5);
+      box-shadow: 0 16px 40px rgba(255, 126, 182, 0.12);
+    }
+    .emoji { font-size: 34px; display: inline-block; margin-bottom: 14px; transition: transform 0.3s; }
+    .card:hover .emoji { transform: scale(1.2) rotate(-8deg); }
+    .card h3 { font-size: 19px; font-weight: 700; margin-bottom: 8px; }
     .card p { color: var(--muted); font-size: 15px; }
+
+    /* Investor talk */
+    .talk-box {
+      margin-top: 36px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 24px; padding: 24px;
+    }
+    .talk-head {
+      display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px;
+      font-size: 14px; color: var(--muted); margin-bottom: 16px;
+    }
+    .talk-head a { color: var(--text); text-decoration: none; }
+    .talk-head a:hover { color: var(--yellow); }
+    .giscus-wrap { min-height: 200px; }
 
     .note {
       margin-top: 40px; font-size: 13px; color: var(--muted);
-      border-left: 2px solid var(--border); padding-left: 16px;
+      border-left: 2px solid var(--pink); padding-left: 16px;
     }
 
     footer {
@@ -122,53 +194,146 @@
       font-size: 14px; color: var(--muted);
     }
     footer a { color: var(--text); text-decoration: none; }
-    footer a:hover { color: var(--accent); }
+    footer a:hover { color: var(--yellow); }
 
-    @media (max-width: 600px) {
-      .hero { padding: 56px 0 64px; }
-      header { padding: 20px 0; }
+    @media (max-width: 480px) {
+      nav a:not(.keep) { display: none; }
+      .hero { padding: 48px 0 64px; }
       section { padding: 56px 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .js .reveal, .line { opacity: 1; transform: none; }
     }
   </style>
 </head>
 <body>
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
   <canvas id="currency-bg" aria-hidden="true"></canvas>
+
+  <div class="ticker" id="ticker" hidden>
+    <div class="ticker-track" id="ticker-track"></div>
+  </div>
 
   <div class="wrap">
     <header>
-      <div class="logo">IMBA44 <span>INVESTOR</span></div>
-      <a href="mailto:no1jsh@imba44.app">Contact</a>
+      <div class="logo"><span class="coin">🪙</span> IMBA44 <span>INVESTOR</span></div>
+      <nav>
+        <a href="#markets">Markets</a>
+        <a href="#tools">AI Tools</a>
+        <a href="#talk">Talk</a>
+        <a class="keep" href="mailto:no1jsh@imba44.app">Contact</a>
+      </nav>
     </header>
 
     <main>
       <div class="hero">
-        <span class="eyebrow">AI for Investment</span>
-        <h1>Investing,<br><span class="grad">read through data.</span></h1>
-        <p class="lead">IMBA44 Investor builds AI tools that support investment decisions. We gather scattered information, interpret it, and make it easy to see at a glance.</p>
-        <a class="cta" href="mailto:no1jsh@imba44.app">Get in touch →</a>
+        <div class="chips">
+          <span class="chip">🌍 Global economy</span>
+          <span class="chip">💱 FX &amp; rates</span>
+          <span class="chip">🤖 AI tools</span>
+          <span class="chip">💬 Investor talk</span>
+        </div>
+        <h1>
+          <span class="line">Global markets,</span>
+          <span class="line grad">made easy to read.</span>
+        </h1>
+        <p class="lead">IMBA44 Investor brings you international economic and financial insights, AI-powered investment tools, and a space to talk markets with fellow investors.</p>
+        <div class="btns">
+          <a class="btn primary" href="#markets">Explore markets →</a>
+          <a class="btn ghost" href="#talk">Join the talk</a>
+        </div>
       </div>
 
-      <section>
-        <div class="label">About</div>
-        <h2>Making complex markets clearer.</h2>
-        <p class="sub">The more information there is, the harder decisions become. We let AI handle repetitive analysis so people have more time to think deeply.</p>
+      <section id="markets">
+        <div class="label">Markets</div>
+        <h2 class="reveal">Live FX, plus the big picture.</h2>
+        <p class="sub reveal">Key exchange rates against the US dollar, updated daily. Below, the global topics we cover.</p>
+
+        <div class="board" id="board"></div>
+        <p class="board-msg" id="board-msg">Loading live rates…</p>
+        <p class="board-note" id="board-note" hidden>
+          Rates update daily · Last update: <span id="updated"></span> · Data: <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">Rates By Exchange Rate API</a>
+        </p>
+
         <div class="grid">
-          <div class="card">
-            <div class="num">01</div>
-            <h3>Research Automation</h3>
-            <p>We build research assistants that gather filings, news, and financial data and summarize the key points.</p>
+          <div class="card reveal">
+            <div class="emoji">🌐</div>
+            <h3>Global macro</h3>
+            <p>Inflation, growth, and central bank moves across major economies, explained in plain language.</p>
           </div>
-          <div class="card">
-            <div class="num">02</div>
-            <h3>Signal Analysis</h3>
-            <p>We combine multiple data sources to surface meaningful changes, shown alongside their supporting evidence.</p>
+          <div class="card reveal">
+            <div class="emoji">💱</div>
+            <h3>FX &amp; rates</h3>
+            <p>Currency trends and interest rate shifts, and how they ripple through markets.</p>
           </div>
-          <div class="card">
-            <div class="num">03</div>
-            <h3>Risk Visibility</h3>
+          <div class="card reveal">
+            <div class="emoji">📊</div>
+            <h3>Equities &amp; sectors</h3>
+            <p>Sector rotations and market themes, tracked across regions.</p>
+          </div>
+          <div class="card reveal">
+            <div class="emoji">🪙</div>
+            <h3>Commodities &amp; crypto</h3>
+            <p>Energy, metals, and digital assets, viewed through the macro lens.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="tools">
+        <div class="label">AI Tools</div>
+        <h2 class="reveal">AI tools for smarter investing.</h2>
+        <p class="sub reveal">We build tools that do the repetitive analysis, so people have more time to think deeply.</p>
+        <div class="grid">
+          <div class="card reveal">
+            <div class="emoji">🔎</div>
+            <h3>Research automation</h3>
+            <p>We gather filings, news, and financial data and summarize the key points.</p>
+          </div>
+          <div class="card reveal">
+            <div class="emoji">📡</div>
+            <h3>Signal analysis</h3>
+            <p>We combine multiple data sources to surface meaningful changes, shown with their evidence.</p>
+          </div>
+          <div class="card reveal">
+            <div class="emoji">🛡️</div>
+            <h3>Risk visibility</h3>
             <p>We visualize portfolio exposure and risk factors so they are easy to understand.</p>
           </div>
         </div>
+      </section>
+
+      <section id="talk">
+        <div class="label">Investor Talk</div>
+        <h2 class="reveal">Talk markets with fellow investors.</h2>
+        <p class="sub reveal">Share your views, ask questions, and discuss global macro trends. Sign in with GitHub to join the conversation.</p>
+        <div class="talk-box reveal">
+          <div class="talk-head">
+            <span>Powered by GitHub Discussions</span>
+            <a href="https://github.com/no1jsh/imba44-landing/discussions" target="_blank" rel="noopener">Open the full board ↗</a>
+          </div>
+          <div class="giscus-wrap">
+            <script src="https://giscus.app/client.js"
+              data-repo="no1jsh/imba44-landing"
+              data-repo-id="R_kgDOVAfjZw"
+              data-category="General"
+              data-category-id="DIC_kwDOVAfjZ84DHUaa"
+              data-mapping="specific"
+              data-term="IMBA44 Investor Talk"
+              data-strict="0"
+              data-reactions-enabled="1"
+              data-emit-metadata="0"
+              data-input-position="top"
+              data-theme="transparent_dark"
+              data-lang="en"
+              crossorigin="anonymous"
+              async></script>
+          </div>
+        </div>
+        <p class="note">Investor Talk posts are personal opinions from community members. They are not investment advice, and IMBA44 Investor does not endorse them.</p>
         <p class="note">Information and analysis provided by this service are for reference only and do not constitute investment advice or solicitation. Final investment decisions and responsibility rest with the user.</p>
       </section>
     </main>
@@ -181,12 +346,98 @@
 
   <script>
     (() => {
+      document.documentElement.classList.add("js");
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      // Reveal sections on scroll
+      const io = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in");
+            io.unobserve(entry.target);
+          }
+        }
+      }, { threshold: 0.15 });
+      document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+
+      // Live FX rates (base USD)
+      const CURRENCIES = [
+        ["KRW", "Korean Won"],
+        ["EUR", "Euro"],
+        ["JPY", "Japanese Yen"],
+        ["GBP", "British Pound"],
+        ["CNY", "Chinese Yuan"],
+      ];
+      const fmt = (v) => v.toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: v < 10 ? 4 : 2,
+      });
+
+      const ticker = document.getElementById("ticker");
+      const tickerTrack = document.getElementById("ticker-track");
+      const board = document.getElementById("board");
+      const boardMsg = document.getElementById("board-msg");
+      const boardNote = document.getElementById("board-note");
+      const updated = document.getElementById("updated");
+
+      function countUp(el, to) {
+        if (reduceMotion) { el.textContent = fmt(to); return; }
+        const start = performance.now();
+        const step = (now) => {
+          const p = Math.min((now - start) / 900, 1);
+          el.textContent = fmt(to * (1 - Math.pow(1 - p, 3)));
+          if (p < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      }
+
+      function render(rates, updatedAt) {
+        const items = CURRENCIES.map(([code, name]) => ({ code, name, value: rates[code] }))
+          .filter((i) => typeof i.value === "number");
+        if (items.length === 0) throw new Error("no rates");
+
+        // Ticker: two identical groups so the loop is seamless
+        const group = document.createElement("div");
+        group.className = "ticker-group";
+        group.innerHTML = items
+          .map((i) => `<span class="ticker-item">USD/${i.code}<b>${fmt(i.value)}</b></span>`)
+          .join("");
+        tickerTrack.replaceChildren(group, group.cloneNode(true));
+        ticker.hidden = false;
+
+        // Board tiles
+        board.replaceChildren(...items.map((i) => {
+          const tile = document.createElement("div");
+          tile.className = "tile";
+          tile.innerHTML = `<div class="code">USD → ${i.code}</div><div class="val">0</div><div class="unit">${i.name} per 1 USD</div>`;
+          countUp(tile.querySelector(".val"), i.value);
+          return tile;
+        }));
+        boardMsg.hidden = true;
+        updated.textContent = updatedAt.replace(" +0000", " UTC");
+        boardNote.hidden = false;
+      }
+
+      fetch("https://open.er-api.com/v6/latest/USD")
+        .then((res) => {
+          if (!res.ok) throw new Error(res.status);
+          return res.json();
+        })
+        .then((data) => {
+          if (data.result !== "success") throw new Error("bad result");
+          render(data.rates, data.time_last_update_utc);
+        })
+        .catch(() => {
+          boardMsg.textContent = "Live rates are unavailable right now. Please check back later.";
+        });
+
+      // Floating currency symbols background
       const canvas = document.getElementById("currency-bg");
-      if (!canvas || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      if (!canvas || reduceMotion) return;
 
       const ctx = canvas.getContext("2d");
       const symbols = ["$", "€", "£", "¥", "₩", "₿"];
-      const colors = ["124, 156, 255", "94, 231, 200"];
+      const colors = ["124, 156, 255", "94, 231, 200", "255, 217, 61", "255, 126, 182"];
       let particles = [];
       let width = 0;
       let height = 0;
@@ -197,12 +448,12 @@
         return {
           x: rand(0, width),
           y: startAtBottom ? height + rand(0, 80) : rand(0, height),
-          size: rand(18, 42),
-          speed: rand(12, 30),
-          drift: rand(-8, 8),
-          rot: rand(-0.4, 0.4),
+          size: rand(18, 44),
+          speed: rand(14, 34),
+          drift: rand(-10, 10),
+          rot: rand(-0.5, 0.5),
           angle: rand(0, Math.PI * 2),
-          alpha: rand(0.08, 0.22),
+          alpha: rand(0.08, 0.24),
           symbol: symbols[Math.floor(Math.random() * symbols.length)],
           color: colors[Math.floor(Math.random() * colors.length)],
         };
@@ -215,7 +466,7 @@
         canvas.width = width * dpr;
         canvas.height = height * dpr;
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        const count = Math.round(Math.min(40, (width * height) / 30000));
+        const count = Math.round(Math.min(44, (width * height) / 28000));
         particles = Array.from({ length: count }, () => makeParticle(false));
       }
 
@@ -236,7 +487,7 @@
           ctx.rotate(p.angle);
           ctx.globalAlpha = p.alpha;
           ctx.fillStyle = `rgb(${p.color})`;
-          ctx.font = `600 ${p.size}px Inter, system-ui, sans-serif`;
+          ctx.font = `700 ${p.size}px Inter, system-ui, sans-serif`;
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
           ctx.fillText(p.symbol, 0, 0);
