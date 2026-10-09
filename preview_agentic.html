@@ -622,14 +622,16 @@
     .cta-container {
       position: relative;
       z-index: 2;
-      max-width: 680px;
+      max-width: 860px;
       margin: 0 auto;
       text-align: center;
     }
     .cta-container h2 {
-      font-size: clamp(32px, 4.4vw, 50px);
+      font-size: clamp(26px, 3.6vw, 44px);
       font-weight: 300;
-      line-height: 1.15;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
       margin-bottom: 16px;
     }
     .cta-container p {
@@ -692,6 +694,10 @@
       .sticky-agent-card { padding: 28px 24px; }
       .agent-text-wrap { max-width: 100%; }
       .agent-art-desktop { display: none; }
+      .cta-container h2 { font-size: clamp(20px, 4.5vw, 32px); }
+    }
+    @media (max-width: 480px) {
+      .cta-container h2 { font-size: 18px; }
     }
   </style>
 </head>
