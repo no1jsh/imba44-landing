@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="quant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IMBA44 Investor - Cyber & AI Design Concepts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ========================================================
+       THEME VARIABLES
+       ======================================================== */
+    :root {
+      --font-body: 'Inter', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-heading: 'Inter', sans-serif;
+    }
+
+    /* 1. QUANT TERMINAL THEME */
+    html[data-theme="quant"] {
+      --bg-base: #06090e;
+      --bg-card: rgba(11, 16, 25, 0.85);
+      --bg-card-hover: rgba(17, 24, 39, 0.95);
+      --border-color: rgba(0, 242, 254, 0.18);
+      --border-glow: rgba(0, 242, 254, 0.45);
+      --text-main: #f3f4f6;
+      --text-muted: #94a3b8;
+      --accent: #00f2fe;
+      --accent-alt: #10b981;
+      --accent-warn: #f59e0b;
+      --tag-bg: rgba(0, 242, 254, 0.1);
+      --btn-bg: #00f2fe;
+      --btn-text: #06090e;
+      --font-heading: 'Chakra Petch', sans-serif;
+      --grid-line: rgba(0, 242, 254, 0.05);
+      --badge-radius: 4px;
+      --card-radius: 8px;
+    }
+
+    /* 2. NEO CYBER HUD THEME */
+    html[data-theme="cyber"] {
+      --bg-base: #05050c;
+      --bg-card: rgba(15, 12, 30, 0.75);
+      --bg-card-hover: rgba(26, 18, 52, 0.9);
+      --border-color: rgba(139, 92, 246, 0.35);
+      --border-glow: rgba(0, 240, 255, 0.6);
+      --text-main: #ffffff;
+      --text-muted: #a78bfa;
+      --accent: #00f0ff;
+      --accent-alt: #8b5cf6;
+      --accent-warn: #ec4899;
+      --tag-bg: rgba(139, 92, 246, 0.15);
+      --btn-bg: linear-gradient(135deg, #00f0ff, #8b5cf6);
+      --btn-text: #05050c;
+      --font-heading: 'Space Grotesk', sans-serif;
+      --grid-line: rgba(139, 92, 246, 0.08);
+      --badge-radius: 12px;
+      --card-radius: 16px;
+    }
+
+    /* 3. FINTECH MINIMAL THEME */
+    html[data-theme="minimal"] {
+      --bg-base: #08090d;
+      --bg-card: rgba(18, 20, 29, 0.65);
+      --bg-card-hover: rgba(28, 31, 44, 0.85);
+      --border-color: rgba(255, 255, 255, 0.1);
+      --border-glow: rgba(59, 130, 246, 0.5);
+      --text-main: #f8fafc;
+      --text-muted: #64748b;
+      --accent: #3b82f6;
+      --accent-alt: #10b981;
+      --accent-warn: #fbbf24;
+      --tag-bg: rgba(255, 255, 255, 0.05);
+      --btn-bg: #3b82f6;
+      --btn-text: #ffffff;
+      --font-heading: 'Inter', sans-serif;
+      --grid-line: rgba(255, 255, 255, 0.02);
+      --badge-radius: 999px;
+      --card-radius: 14px;
+    }
+
+    /* Global Reset */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh;
+      transition: background-color 0.4s ease, color 0.4s ease;
+    }
+
+    /* TOP THEME CONTROLLER DOCK (PREVIEW ONLY) */
+    .theme-controller {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      background: rgba(10, 13, 20, 0.92);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 999px;
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.7), 0 0 20px rgba(0, 242, 254, 0.15);
+    }
+    .theme-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0 10px;
+      border-right: 1px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .theme-label .led {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+      animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    .theme-btn {
+      background: transparent;
+      border: none;
+      color: #cbd5e1;
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .theme-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+    }
+    .theme-btn.active {
+      background: #ffffff;
+      color: #06090e;
+      box-shadow: 0 2px 10px rgba(255,255,255,0.3);
+    }
+
+    /* BACKGROUND CANVAS & GRID */
+    #bg-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* TICKER */
+    .ticker-bar {
+      position: relative;
+      z-index: 2;
+      background: rgba(0, 0, 0, 0.6);
+      border-bottom: 1px solid var(--border-color);
+      overflow: hidden;
+      margin-top: 68px; /* space for controller */
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+    .ticker-wrap { display: flex; width: max-content; animation: ticker-scroll 32s linear infinite; }
+    .ticker-bar:hover .ticker-wrap { animation-play-state: paused; }
+    .ticker-group { display: flex; gap: 24px; padding: 7px 12px; align-items: center; }
+    .ticker-cell {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-muted);
+    }
+    .ticker-cell b { color: var(--text-main); font-weight: 600; }
+    .ticker-cell .delta-up { color: var(--accent-alt); }
+    .ticker-cell .delta-down { color: #ef4444; }
+    @keyframes ticker-scroll { to { transform: translateX(-50%); } }
+
+    /* LAYOUT WRAPPER */
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* HEADER */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-heading);
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--tag-bg);
+      border: 1px solid var(--border-color);
+      display: grid;
+      place-items: center;
+      color: var(--accent);
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 700;
+      box-shadow: 0 0 14px var(--border-color);
+    }
+    .logo span { color: var(--accent); }
+    nav { display: flex; align-items: center; gap: 16px; font-size: 14px; }
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--text-main); }
+    .nav-btn {
+      padding: 7px 16px;
+      border-radius: var(--badge-radius);
+      border: 1px solid var(--border-color);
+      background: var(--tag-bg);
+      color: var(--accent) !important;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: all 0.2s;
+    }
+    .nav-btn:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 12px var(--border-glow);
+    }
+
+    /* HERO SECTION */
+    .hero {
+      padding: 84px 0 64px;
+      text-align: left;
+    }
+    .sys-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: var(--badge-radius);
+      background: var(--tag-bg);
+      border: 1px solid var(--border-color);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 24px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .sys-badge::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+    h1 {
+      font-family: var(--font-heading);
+      font-size: clamp(38px, 5.5vw, 68px);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 22px;
+      max-width: 900px;
+    }
+    h1 .glow-text {
+      color: var(--accent);
+      text-shadow: 0 0 28px var(--border-glow);
+    }
+    .hero p {
+      font-size: 18px;
+      color: var(--text-muted);
+      max-width: 640px;
+      margin-bottom: 36px;
+      line-height: 1.7;
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+    }
+    .btn-cyber {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 28px;
+      background: var(--btn-bg);
+      color: var(--btn-text);
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      border-radius: var(--badge-radius);
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+    }
+    .btn-cyber:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px var(--border-glow);
+    }
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 26px;
+      background: transparent;
+      color: var(--text-main);
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: var(--badge-radius);
+      border: 1px solid var(--border-color);
+      transition: all 0.25s ease;
+    }
+    .btn-outline:hover {
+      border-color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* SECTION SHARED */
+    section { padding: 68px 0; }
+    .section-head {
+      margin-bottom: 36px;
+    }
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+      display: block;
+    }
+    h2 {
+      font-family: var(--font-heading);
+      font-size: clamp(26px, 3.8vw, 38px);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    /* REALTIME FX MONITOR BOARD */
+    .board-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 16px;
+    }
+    .rate-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--card-radius);
+      padding: 20px;
+      backdrop-filter: blur(14px);
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .rate-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .rate-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-glow);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 16px var(--border-color);
+    }
+    .rate-card:hover::before { opacity: 1; }
+    .rate-card .pair {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .rate-card .symbol-tag {
+      background: var(--tag-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 2px 6px;
+      color: var(--accent);
+      font-size: 11px;
+    }
+    .rate-card .value {
+      font-family: var(--font-mono);
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.03em;
+    }
+    .rate-card .name {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .rate-card .trend {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      margin-top: 10px;
+      color: var(--accent-alt);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* TOPICS / CARDS GRID */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-top: 24px;
+    }
+    .card-tech {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--card-radius);
+      padding: 28px;
+      backdrop-filter: blur(14px);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .card-tech:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--accent);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6), 0 0 20px var(--border-color);
+    }
+    .card-num {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin-bottom: 14px;
+      display: block;
+    }
+    .card-tech h3 {
+      font-family: var(--font-heading);
+      font-size: 19px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--text-main);
+    }
+    .card-tech p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* CONTACT / CTA */
+    .cta-box {
+      margin-top: 40px;
+      padding: 56px 36px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--card-radius);
+      text-align: center;
+      backdrop-filter: blur(20px);
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-box::after {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 500px;
+      height: 250px;
+      background: radial-gradient(ellipse, var(--border-glow), transparent 70%);
+      opacity: 0.3;
+      pointer-events: none;
+    }
+    .cta-box h2 { margin-bottom: 12px; }
+    .cta-box p { color: var(--text-muted); font-size: 16px; margin-bottom: 28px; max-width: 560px; margin-left: auto; margin-right: auto; }
+    .cta-email {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      color: var(--accent);
+      margin-top: 18px;
+    }
+
+    /* DISCLAIMER */
+    .disclaimer {
+      margin-top: 36px;
+      padding: 16px 20px;
+      border: 1px dashed rgba(255, 255, 255, 0.1);
+      border-radius: var(--card-radius);
+      font-size: 12px;
+      color: #64748b;
+      line-height: 1.6;
+    }
+
+    /* FOOTER */
+    footer {
+      padding: 36px 0 54px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      margin-top: 60px;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .theme-controller { width: 92%; justify-content: space-between; }
+      .theme-btn span { display: none; }
+      .hero { padding: 48px 0; }
+      header { flex-direction: column; gap: 16px; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================================
+       THEME CONTROLLER TOOLBAR (상단 실시간 시안 스위처)
+       ======================================================== -->
+  <aside class="theme-controller" aria-label="Design Concept Switcher">
+    <div class="theme-label">
+      <span class="led"></span>
+      시안 선택:
+    </div>
+    <button class="theme-btn active" data-switch="quant" onclick="switchTheme('quant')">
+      <span>01.</span> Deep Quant Terminal
+    </button>
+    <button class="theme-btn" data-switch="cyber" onclick="switchTheme('cyber')">
+      <span>02.</span> Neo Cyber HUD
+    </button>
+    <button class="theme-btn" data-switch="minimal" onclick="switchTheme('minimal')">
+      <span>03.</span> FinTech Minimal
+    </button>
+  </aside>
+
+  <!-- BACKGROUND GRAPHICS -->
+  <div class="bg-grid"></div>
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- REAL-TIME FX TICKER -->
+  <div class="ticker-bar">
+    <div class="ticker-wrap" id="ticker-wrap">
+      <div class="ticker-group" id="ticker-primary">
+        <span class="ticker-cell">FEED: <b>INITIALIZING...</b></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- HEADER -->
+    <header>
+      <div class="logo">
+        <div class="logo-icon">44</div>
+        IMBA44 <span>INVESTOR</span>
+      </div>
+      <nav>
+        <a href="#macro">Macro Index</a>
+        <a href="#signals">AI Alpha</a>
+        <a href="#risk">Risk Matrix</a>
+        <a href="mailto:no1jsh@imba44.app" class="nav-btn">Terminal Access</a>
+      </nav>
+    </header>
+
+    <main>
+      <!-- HERO -->
+      <section class="hero">
+        <div class="sys-badge" id="hero-badge">SYSTEM STATUS: ONLINE // LATENCY 1.2ms</div>
+        <h1 id="hero-title">
+          Autonomous Intelligence for <br>
+          <span class="glow-text">Global Macro &amp; Quant Alpha</span>
+        </h1>
+        <p id="hero-desc">
+          초거대 언어모델과 계량 금융 모델을 결합하여 복잡한 글로벌 거시경제 지표, 환율 변동성, 팩터 위험을 실시간으로 추적·해석합니다.
+        </p>
+        <div class="hero-actions">
+          <a href="#markets" class="btn-cyber">Launch Terminal &rarr;</a>
+          <a href="mailto:no1jsh@imba44.app" class="btn-outline">API &amp; Partnership</a>
+        </div>
+      </section>
+
+      <!-- LIVE FX MONITOR -->
+      <section id="markets">
+        <div class="section-head">
+          <span class="section-label">// REAL-TIME VALUATION FEED</span>
+          <h2>Live FX &amp; Liquidity Tracker</h2>
+        </div>
+        <div class="board-grid" id="board-grid">
+          <!-- Live Rate Cards will be injected by JavaScript -->
+        </div>
+      </section>
+
+      <!-- CORE AI ENGINES -->
+      <section id="signals">
+        <div class="section-head">
+          <span class="section-label">// INTELLIGENCE ARCHITECTURE</span>
+          <h2>3대 퀀트 AI 분석 파이프라인</h2>
+        </div>
+        <div class="feature-grid">
+          <div class="card-tech">
+            <span class="card-num">MODULE 01 // NLP</span>
+            <h3>Research Automation</h3>
+            <p>전 세계 중앙은행 의사록, SEC 공시(10-K/Q), 글로벌 금융 뉴스를 실시간 파싱하여 정량화된 핵심 지표와 센티먼트를 추출합니다.</p>
+          </div>
+          <div class="card-tech">
+            <span class="card-num">MODULE 02 // MULTI-FACTOR</span>
+            <h3>Signal Alpha Matrix</h3>
+            <p>다중 거시경제 데이터와 유동성 흐름을 결합하여 자산군별 변곡점 및 가격 괴리 시그널을 통계적 유의성과 함께 도출합니다.</p>
+          </div>
+          <div class="card-tech">
+            <span class="card-num">MODULE 03 // RISK SENTRY</span>
+            <h3>Tail Risk &amp; Drawdown Sentinel</h3>
+            <p>포트폴리오 민감도 및 극단적 시장 충격(Black Swan) 시나리오 스트레스 테스트를 자율 모니터링하여 위험 노출도를 선제 방어합니다.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA / CONTACT -->
+      <section id="contact">
+        <div class="cta-box">
+          <span class="section-label" style="display:inline-block; margin-bottom:12px;">// CONNECT WITH IMBA44</span>
+          <h2>Institutional Partnerships &amp; Terminal Inquiry</h2>
+          <p>IMBA44 Investor의 독자적인 퀀트 엔진과 글로벌 매크로 인텔리전스 도입 및 협업 문의를 환영합니다.</p>
+          <a href="mailto:no1jsh@imba44.app" class="btn-cyber">Contact Quantitative Team &rarr;</a>
+          <div class="cta-email">DIRECT DISPATCH: no1jsh@imba44.app</div>
+        </div>
+
+        <div class="disclaimer">
+          <strong>LEGAL DISCLAIMER:</strong> 본 서비스에서 제공하는 모든 정량 데이터, AI 시그널 및 매크로 분석 정보는 연구 및 참고 목적의 정보 제공을 위한 것이며, 금융상품 매매 권유나 투자 자문을 구성하지 않습니다. 최종 투자 결정과 책임은 이용자 본인에게 있습니다.
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+      <div>&copy; 2026 IMBA44 INVESTOR. ALL RIGHTS RESERVED.</div>
+      <div>SYS_REV: v4.4-ALPHA</div>
+    </footer>
+  </div>
+
+  <!-- SCRIPT -->
+  <script>
+    // Theme Switcher Logic
+    let currentTheme = 'quant';
+    const themes = {
+      quant: {
+        badge: "SYSTEM STATUS: ONLINE // LATENCY 1.2ms",
+        title: "Autonomous Intelligence for <br><span class=\"glow-text\">Global Macro &amp; Quant Alpha</span>",
+        desc: "초거대 언어모델과 계량 금융 모델을 결합하여 복잡한 글로벌 거시경제 지표, 환율 변동성, 팩터 위험을 실시간으로 추적·해석합니다."
+      },
+      cyber: {
+        badge: "⚡ NEURAL MATRIX ACTIVE // SYNAPSE EFFICIENCY 99.8%",
+        title: "Deep Neural Engine for <br><span class=\"glow-text\">Autonomous Asset Intelligence</span>",
+        desc: "인공신경망 딥러닝과 실시간 글로벌 오더플로우를 기반으로 시장 변곡점과 이상 징후를 자율 탐지하는 차세대 AI 시스템입니다."
+      },
+      minimal: {
+        badge: "ENTERPRISE INTELLIGENCE // INSTITUTIONAL STANDARD",
+        title: "Precision Analytics for <br><span class=\"glow-text\">Institutional Capital &amp; Markets</span>",
+        desc: "기관 투자자와 전문 자산운용사를 위해 군더더기 없이 정제된 글로벌 거시 데이터와 정량적 리스크 인텔리전스를 제공합니다."
+      }
+    };
+
+    function switchTheme(theme) {
+      currentTheme = theme;
+      document.documentElement.setAttribute('data-theme', theme);
+      document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.switch === theme);
+      });
+      document.getElementById('hero-badge').textContent = themes[theme].badge;
+      document.getElementById('hero-title').innerHTML = themes[theme].title;
+      document.getElementById('hero-desc').textContent = themes[theme].desc;
+      initCanvas();
+    }
+
+    // Live FX Rates Fetching
+    const CURRENCIES = [
+      { code: "KRW", name: "Korean Won", symbol: "₩", delta: "+0.32%" },
+      { code: "EUR", name: "Euro", symbol: "€", delta: "-0.14%" },
+      { code: "JPY", name: "Japanese Yen", symbol: "¥", delta: "+0.45%" },
+      { code: "GBP", name: "British Pound", symbol: "£", delta: "-0.08%" },
+      { code: "CNY", name: "Chinese Yuan", symbol: "¥", delta: "+0.11%" }
+    ];
+
+    const fmt = (v) => v.toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: v < 10 ? 4 : 2
+    });
+
+    async function loadRates() {
+      try {
+        const res = await fetch("https://open.er-api.com/v6/latest/USD");
+        const data = await res.json();
+        if (data.result !== "success") throw new Error("API error");
+        renderUI(data.rates);
+      } catch (err) {
+        console.warn("Rates fallback active", err);
+        renderUI({ KRW: 1395.20, EUR: 0.924, JPY: 154.30, GBP: 0.785, CNY: 7.234 });
+      }
+    }
+
+    function renderUI(rates) {
+      const boardGrid = document.getElementById("board-grid");
+      const tickerWrap = document.getElementById("ticker-wrap");
+
+      // Board Grid
+      boardGrid.innerHTML = CURRENCIES.map(c => {
+        const val = rates[c.code] || 0;
+        const isUp = c.delta.startsWith("+");
+        return `
+          <div class="rate-card">
+            <div class="pair">
+              <span>USD / ${c.code}</span>
+              <span class="symbol-tag">${c.symbol}</span>
+            </div>
+            <div class="value">${fmt(val)}</div>
+            <div class="name">${c.name}</div>
+            <div class="trend" style="color: ${isUp ? 'var(--accent-alt)' : '#ef4444'}">
+              <span>${isUp ? '▲' : '▼'}</span>
+              <span>${c.delta}</span>
+              <span style="color: var(--text-muted); margin-left: 4px;">24h</span>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      // Ticker
+      const tickerHtml = CURRENCIES.map(c => {
+        const val = rates[c.code] || 0;
+        const isUp = c.delta.startsWith("+");
+        return `
+          <span class="ticker-cell">
+            ${c.code}/USD: <b>${fmt(val)}</b>
+            <span class="${isUp ? 'delta-up' : 'delta-down'}">${c.delta}</span>
+          </span>
+        `;
+      }).join("") + `<span class="ticker-cell" style="color:var(--accent);">// IMBA44 NEURAL CORE FEED ACTIVE</span>`;
+
+      tickerWrap.innerHTML = `
+        <div class="ticker-group">${tickerHtml}</div>
+        <div class="ticker-group">${tickerHtml}</div>
+      `;
+    }
+
+    loadRates();
+
+    // DYNAMIC BACKGROUND CANVAS
+    const canvas = document.getElementById("bg-canvas");
+    const ctx = canvas.getContext("2d");
+    let width = 0, height = 0;
+    let particles = [];
+    let mouse = { x: -1000, y: -1000 };
+
+    window.addEventListener("mousemove", (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+
+    function resizeCanvas() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    }
+    window.addEventListener("resize", () => { resizeCanvas(); initCanvas(); });
+    resizeCanvas();
+
+    function initCanvas() {
+      particles = [];
+      const count = currentTheme === 'cyber' ? 45 : 30;
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * (currentTheme === 'cyber' ? 0.7 : 0.4),
+          vy: (Math.random() - 0.5) * (currentTheme === 'cyber' ? 0.7 : 0.4),
+          radius: Math.random() * 2 + 1.2
+        });
+      }
+    }
+    initCanvas();
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+
+      if (currentTheme === 'minimal') {
+        // Subtle radial spotlight tracking mouse
+        if (mouse.x > 0) {
+          const grad = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 420);
+          grad.addColorStop(0, "rgba(59, 130, 246, 0.08)");
+          grad.addColorStop(1, "transparent");
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, width, height);
+        }
+      } else {
+        // Quant & Cyber: Neural nodes & connecting lines
+        const nodeColor = currentTheme === 'quant' ? "rgba(0, 242, 254, " : "rgba(139, 92, 246, ";
+        const lineColor = currentTheme === 'quant' ? "rgba(0, 242, 254, " : "rgba(0, 240, 255, ";
+
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          if (p.x < 0 || p.x > width) p.vx *= -1;
+          if (p.y < 0 || p.y > height) p.vy *= -1;
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fillStyle = nodeColor + "0.6)";
+          ctx.fill();
+
+          for (let j = i + 1; j < particles.length; j++) {
+            const p2 = particles[j];
+            const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+            if (dist < 130) {
+              ctx.beginPath();
+              ctx.moveTo(p.x, p.y);
+              ctx.lineTo(p2.x, p2.y);
+              ctx.strokeStyle = lineColor + (1 - dist / 130) * 0.22 + ")";
+              ctx.lineWidth = 0.8;
+              ctx.stroke();
+            }
+          }
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>
